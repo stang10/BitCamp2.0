@@ -25,6 +25,10 @@ export class HomePage {
   linkToPhoto: String;
   counter = 0;
 
+  //Participant Stuff
+  play = false;
+  person: number = 1;
+
 
   setSearches(ev: any){
     let val: String = ev.target.value;
@@ -119,6 +123,21 @@ export class HomePage {
         this.counter++;
       }
       this.generateCards()
+    } 
+    else {
+      this.nextPerson()
+    }
+  }
+
+  startPerson(){
+    this.play = true;
+  }
+
+  nextPerson(){
+    if (this.person < +this.participants) {
+      this.counter = 0;
+      this.person++;
+      this.play = false;
     }
   }
 

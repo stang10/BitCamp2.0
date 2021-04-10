@@ -1,4 +1,4 @@
-<ion-header [translucent]="true">
+<ion-header *ngIf="submitted === false" [translucent]="true">
   <ion-toolbar>
     <ion-title>
       Blank
@@ -43,16 +43,40 @@
   <ion-button color="primary" type="submit" (click)="getLocation()">Submit</ion-button>
 </ion-content>
 
+
+<ion-header *ngIf="submitted === true" [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Person {{person}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content *ngIf="submitted === true" [fullscreen]="true">
-  <ion-card>
-    <img src="{{linkToPhoto}}"/>
-    <ion-card-header>
-      <ion-card-title>{{name}}</ion-card-title>
-    </ion-card-header>
-    
-    <ion-card-content>
-      {{address}} 
-    </ion-card-content>
-  </ion-card>
-  <ion-button color="primary" type="submit" (click)="moveToNext()">Next</ion-button>
+  <ion-content *ngIf="play === true" [fullscreen]="true">
+    <ion-card>
+      <img src="{{linkToPhoto}}"/>
+      <ion-card-header>
+        <ion-card-title>{{name}}</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        {{address}} 
+      </ion-card-content>
+    </ion-card>
+    <ion-button color="primary" type="submit" (click)="moveToNext()">Next</ion-button>
+  </ion-content>
+
+  <ion-content *ngIf="play === false" [fullscreen]="true">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Person {{person}}</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        Are you ready?
+      </ion-card-content>
+    </ion-card>
+    <ion-button color="primary" type="submit" (click)="startPerson()">Next</ion-button>
+  </ion-content>
 </ion-content>
