@@ -17,6 +17,7 @@ export class HomePage {
   selected = {};
   submitted = false;
   searched: String;
+  participants: String;
 
   setSearches(ev: any){
     let val: String = ev.target.value;
@@ -25,6 +26,7 @@ export class HomePage {
     val = val.replace(/\s/g, '+')
 
     this.searched = val
+    
 
   }
 
@@ -35,6 +37,7 @@ export class HomePage {
     // val = val.replace(/\s/g, '+')
 
     //var latLng = await this.getLatLng(val);
+    this.submitted = true;
 
     var latLng;
 
@@ -77,6 +80,8 @@ export class HomePage {
       console.log(this.locations[response['results'][2]['place_id']])
       console.log(this.selected[response['results'][2]['place_id']])
     });
+
+    console.log(this.participants);
 
   }
 
