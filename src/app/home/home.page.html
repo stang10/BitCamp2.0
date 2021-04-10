@@ -13,7 +13,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-searchbar (search)="getTime($event)" inputmode="search" autocorrect="on" placeholder="Enter as CityName, State" ></ion-searchbar>
+  <ion-searchbar (search)="setSearches($event)" inputmode="search" autocorrect="on" placeholder="Enter as CityName, State" ></ion-searchbar>
   <ion-list>
     <ion-list-header>
       <ion-label>
@@ -36,8 +36,9 @@
         <ion-select-option value="10">10</ion-select-option>
       </ion-select>
     </ion-item>
-  
+
   </ion-list>
+  <ion-button color="primary" type="submit" (click)="getTime()">Submit</ion-button>
   <ion-card>
     <img src="https://upload.wikimedia.org/wikipedia/en/4/4d/Shrek_%28character%29.png"/>
     <ion-card-header>

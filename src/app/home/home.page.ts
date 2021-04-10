@@ -15,12 +15,24 @@ export class HomePage {
   long: number;
   locations = {};
   selected = {};
+  submitted = false;
+  searched: String;
 
-  async getTime(ev: any) {
+  setSearches(ev: any){
     let val: String = ev.target.value;
 
     val = val.trim();
     val = val.replace(/\s/g, '+')
+
+    this.searched = val
+
+  }
+
+  async getTime() {
+    // let val: String = ev.target.value;
+
+    // val = val.trim();
+    // val = val.replace(/\s/g, '+')
 
     //var latLng = await this.getLatLng(val);
 
@@ -31,7 +43,7 @@ export class HomePage {
         console.log("ltlng: " + latLng);
     }) */
 
-    const response = await this.getLatLng(val);
+    const response = await this.getLatLng(this.searched);
 
     latLng = response;
 
