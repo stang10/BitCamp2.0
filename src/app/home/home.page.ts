@@ -143,11 +143,35 @@ export class HomePage {
       this.person++;
       this.play = false;
     } else {
-      this.getResults();
+      var shrek = this.getResults();
+      var name = this.locations[shrek][0];
+
+      console.log(name);
     }
   }
 
   getResults() {
-  }
+    var max: number = -1;
+    var maxPlaceId;
+    var maxRating;
 
+    for(let key in this.selected) {
+      let value = this.selected[key];
+
+      if(value > max) {
+        max = value;
+        maxPlaceId = key;
+        maxRating = this.locations[key][4];
+      }
+      
+      if(value == max) {
+        if(this.locations[key][4] > maxRating) {
+          max = value;
+          maxPlaceId = key;
+          maxRating = this.locations[key][4];
+        }
+      }
+    }
+    return maxPlaceId;
+  }
 }
