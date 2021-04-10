@@ -16,14 +16,7 @@
     <ion-input required type="text" [(ngModel)]="searched"></ion-input>
   </ion-item>-->
   <ion-searchbar [(ngModel)]="searched" inputmode="search" autocorrect="on" placeholder="Enter as CityName, State" ></ion-searchbar>
-  <ion-list>
-    <ion-list-header>
-      <ion-label>
-        Single Selection
-      </ion-label>
-    </ion-list-header>
-  
-    
+  <ion-list> 
     <ion-item>
       <ion-label>Number of Participants</ion-label>
       <ion-select [(ngModel)]="participants" placeholder="Select One">
@@ -40,7 +33,10 @@
     </ion-item>
 
   </ion-list>
-  <ion-button color="primary" type="submit" (click)="getLocation()">Submit</ion-button>
+
+  <div class="ion-padding">
+    <ion-button color="primary" type="submit" (click)="getLocation()" expand="block">Submit</ion-button>
+  </div>
 </ion-content>
 
 
@@ -64,7 +60,23 @@
         {{address}} 
       </ion-card-content>
     </ion-card>
-    <ion-button color="primary" type="submit" (click)="moveToNext()">Next</ion-button>
+
+    <ion-grid>
+      <ion-row>
+        <ion-col>
+           <div class="ion-padding">
+          <ion-button color="danger" type="submit" (click)="moveToNext()" expand="block">No</ion-button>
+          </div>
+        </ion-col>
+
+        <ion-col>
+          <div class="ion-padding">
+          <ion-button color="success" type="submit" (click)="increment()" expand="block">Yes</ion-button>
+         </div>
+       </ion-col>
+       
+      </ion-row>
+    </ion-grid>
   </ion-content>
 
   <ion-content *ngIf="play === false" [fullscreen]="true">
@@ -77,6 +89,9 @@
         Are you ready?
       </ion-card-content>
     </ion-card>
-    <ion-button color="primary" type="submit" (click)="startPerson()">Next</ion-button>
+
+    <div class="ion-padding">
+      <ion-button color="primary" type="submit" (click)="startPerson()" expand="block">Next</ion-button>
+    </div>
   </ion-content>
 </ion-content>

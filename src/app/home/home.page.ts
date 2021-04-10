@@ -17,13 +17,14 @@ export class HomePage {
   selected = {};
   submitted = false;
   searched: String;
-  participants: String;
+  participants: String = "2";
 
   //Card Values
   name: String;
   address: String;
   linkToPhoto: String;
   counter = 0;
+  keys = []
 
   //Participant Stuff
   play = false;
@@ -66,10 +67,10 @@ export class HomePage {
       
       for (let i = 0; i < 20; i++) {
         if (response['results'][i].hasOwnProperty("opening_hours")){
-          this.locations[response['results'][i]['place_id']] = [response['results'][i]['name'], response['results'][i]['vicinity'], response['results'][i]['photos'][0]['photo_reference'], [0,response['results'][i]['opening_hours']['open_now']]]
+          this.locations[response['results'][i]['place_id']] = [response['results'][i]['name'], response['results'][i]['vicinity'], response['results'][i]['photos'][0]['photo_reference'], [0,response['results'][i]['opening_hours']['open_now']], response['results'][i]['rating']]
         }
         else{
-          this.locations[response['results'][i]['place_id']] = [response['results'][i]['name'], response['results'][i]['vicinity'], response['results'][i]['photos'][0]['photo_reference'], [1]]
+          this.locations[response['results'][i]['place_id']] = [response['results'][i]['name'], response['results'][i]['vicinity'], response['results'][i]['photos'][0]['photo_reference'], [1], response['results'][i]['rating']]
         }
         this.selected[response['results'][i]['place_id']] = 0
       }
@@ -80,6 +81,7 @@ export class HomePage {
       console.log(Object.keys(this.locations));
 
       this.submitted = true;
+      this.keys = Object.keys(this.locations)
       this.generateCards();
     });
 
@@ -104,22 +106,19 @@ export class HomePage {
   }
 
   generateCards() {
-    
-    var keys = Object.keys(this.locations)
-    var first = keys[this.counter]
+    var card = this.keys[this.counter]
 
-    this.linkToPhoto = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' + this.locations[first][2] + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8'
-    this.name = this.locations[first][0]
-    this.address = this.locations[first][1]
+    this.linkToPhoto = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' + this.locations[card][2] + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8'
+    this.name = this.locations[card][0]
+    this.address = this.locations[card][1]
 
   }
 
   moveToNext() {
     if (this.counter != 19){
-      var keys = Object.keys(this.locations)
 
       this.counter++;
-      if (this.locations[keys[this.counter]][3][0] == 1){
+      if (this.locations[this.keys[this.counter]][3][0] == 1){
         this.counter++;
       }
       this.generateCards()
@@ -127,6 +126,11 @@ export class HomePage {
     else {
       this.nextPerson()
     }
+  }
+
+  increment() {
+    this.selected[this.keys[this.counter]]++;
+    this.moveToNext();
   }
 
   startPerson(){
@@ -138,7 +142,12 @@ export class HomePage {
       this.counter = 0;
       this.person++;
       this.play = false;
+    } else {
+      this.getResults();
     }
+  }
+
+  getResults() {
   }
 
 }
