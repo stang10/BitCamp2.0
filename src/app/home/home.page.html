@@ -49,7 +49,7 @@
 </ion-header>
 
 <ion-content *ngIf="submitted === true" [fullscreen]="true">
-  <ion-content *ngIf="play === true" [fullscreen]="true">
+  <ion-content *ngIf="play === true && matched === false" [fullscreen]="true">
     <ion-card>
       <img src="{{linkToPhoto}}"/>
       <ion-card-header>
@@ -79,7 +79,7 @@
     </ion-grid>
   </ion-content>
 
-  <ion-content *ngIf="play === false" [fullscreen]="true">
+  <ion-content *ngIf="play === false && matched === false" [fullscreen]="true">
     <ion-card>
       <ion-card-header>
         <ion-card-title>Person {{person}}</ion-card-title>
@@ -93,5 +93,27 @@
     <div class="ion-padding">
       <ion-button color="primary" type="submit" (click)="startPerson()" expand="block">Next</ion-button>
     </div>
+  </ion-content>
+
+  <ion-content *ngIf="matched === true" [fullscreen]="true">
+    <ion-card color="success">
+      <ion-card-header>
+        <ion-card-subtitle>With {{votes}} votes...</ion-card-subtitle>
+        <ion-card-title>It's a match!</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+
+      </ion-card-content>
+    </ion-card>
+    <ion-card>
+      <img src="{{linkToPhoto}}"/>
+      <ion-card-header>
+        <ion-card-title>{{name}}</ion-card-title>
+      </ion-card-header>
+      
+      <ion-card-content>
+        {{address}} 
+      </ion-card-content>
+    </ion-card>
   </ion-content>
 </ion-content>

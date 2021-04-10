@@ -18,6 +18,7 @@ export class HomePage {
   submitted = false;
   searched: String;
   participants: String = "2";
+  matched = false;
 
   //Card Values
   name: String;
@@ -29,6 +30,9 @@ export class HomePage {
   //Participant Stuff
   play = false;
   person: number = 1;
+
+  //Match
+  votes: number = 0;
 
 
   setSearches(ev: any){
@@ -172,6 +176,11 @@ export class HomePage {
         }
       }
     }
+    this.matched = true;
+    this.linkToPhoto = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' + this.locations[maxPlaceId][2] + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8'
+    this.name = this.locations[maxPlaceId][0]
+    this.address = this.locations[maxPlaceId][1]
+    this.votes = max;
     return maxPlaceId;
   }
 }
