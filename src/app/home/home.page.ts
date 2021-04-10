@@ -19,6 +19,13 @@ export class HomePage {
   searched: String;
   participants: String;
 
+  //Card Values
+  name: String;
+  address: String;
+  linkToPhoto: String;
+  counter = 0;
+
+
   setSearches(ev: any){
     let val: String = ev.target.value;
 
@@ -26,25 +33,11 @@ export class HomePage {
     val = val.replace(/\s/g, '+')
 
     this.searched = val
-    
-
   }
 
-  async getTime() {
-    // let val: String = ev.target.value;
-
-    // val = val.trim();
-    // val = val.replace(/\s/g, '+')
-
-    //var latLng = await this.getLatLng(val);
-    this.submitted = true;
+  async getLocation() {
 
     var latLng;
-
-    /*this.getLatLng(val).then((response) =>  {
-        latLng = response;
-        console.log("ltlng: " + latLng);
-    }) */
 
     const response = await this.getLatLng(this.searched);
 
@@ -79,6 +72,11 @@ export class HomePage {
       
       console.log(this.locations[response['results'][2]['place_id']])
       console.log(this.selected[response['results'][2]['place_id']])
+
+      console.log(Object.keys(this.locations));
+
+      this.submitted = true;
+      this.generateCards();
     });
 
     console.log(this.participants);
@@ -89,26 +87,6 @@ export class HomePage {
 
     var placesString =  'https://maps.googleapis.com/maps/api/geocode/json?address=' + city + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8';
     var ltLng:any;
-    
-    //let httpString = proxyURL.concat(placesString);
-
-    /*const data = await this.http.get(placesString, {responseType: 'json'}).toPromise();
-    //console.log(data['results'][0]['geometry']['location']);
-    
-    var ltLng:any;
-    ltLng = [data['results'][0]['geometry']['location']["lat"], data['results'][0]['geometry']['location']["lng"]]
-
-    console.log(ltLng); */
-
-    /*this.http.get(placesString).subscribe((response) => {
-      console.log(response);
-
-      ltLng = [2];
-      ltLng[0] = response['results'][0]['geometry']['location']["lat"];
-      ltLng[1] = response['results'][0]['geometry']['location']["lng"];
-
-      console.log("in scope " + ltLng);
-    }); */
 
     const response = await this.http.get(placesString, {responseType: 'json'}).toPromise();
 
@@ -116,10 +94,32 @@ export class HomePage {
     ltLng[0] = response['results'][0]['geometry']['location']["lat"];
     ltLng[1] = response['results'][0]['geometry']['location']["lng"];
 
-
     console.log("out of scope " + ltLng);
-    return ltLng;
-  
-  
+    
+    return ltLng; 
   }
+
+  generateCards() {
+    
+    var keys = Object.keys(this.locations)
+    var first = keys[this.counter]
+
+    this.linkToPhoto = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' + this.locations[first][2] + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8'
+    this.name = this.locations[first][0]
+    this.address = this.locations[first][1]
+
+  }
+
+  moveToNext() {
+    if (this.counter != 19){
+      var keys = Object.keys(this.locations)
+
+      this.counter++;
+      if (this.locations[keys[this.counter]][3][0] == 1){
+        this.counter++;
+      }
+      this.generateCards()
+    }
+  }
+
 }

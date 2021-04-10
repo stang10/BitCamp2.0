@@ -10,7 +10,12 @@
 
 
 <ion-content *ngIf="submitted === false" [fullscreen]="true">
-  <ion-searchbar (search)="setSearches($event)" inputmode="search" autocorrect="on" placeholder="Enter as CityName, State" ></ion-searchbar>
+  <!---<ion-searchbar (search)="setSearches($event)" inputmode="search" autocorrect="on" placeholder="Enter as CityName, State" ></ion-searchbar>--->
+  <!---<ion-item>
+    <ion-label position="stacked">Search Location<ion-text color="danger">*</ion-text></ion-label>
+    <ion-input required type="text" [(ngModel)]="searched"></ion-input>
+  </ion-item>-->
+  <ion-searchbar [(ngModel)]="searched" inputmode="search" autocorrect="on" placeholder="Enter as CityName, State" ></ion-searchbar>
   <ion-list>
     <ion-list-header>
       <ion-label>
@@ -35,19 +40,19 @@
     </ion-item>
 
   </ion-list>
-  <ion-button color="primary" type="submit" (click)="getTime()">Submit</ion-button>
+  <ion-button color="primary" type="submit" (click)="getLocation()">Submit</ion-button>
 </ion-content>
 
 <ion-content *ngIf="submitted === true" [fullscreen]="true">
   <ion-card>
-    <img src="https://upload.wikimedia.org/wikipedia/en/4/4d/Shrek_%28character%29.png"/>
+    <img src="{{linkToPhoto}}"/>
     <ion-card-header>
-      <ion-card-subtitle>What are you doing in my swamp?</ion-card-subtitle>
-      <ion-card-title>Shrek</ion-card-title>
+      <ion-card-title>{{name}}</ion-card-title>
     </ion-card-header>
     
     <ion-card-content>
-      Hello 
+      {{address}} 
     </ion-card-content>
   </ion-card>
+  <ion-button color="primary" type="submit" (click)="moveToNext()">Next</ion-button>
 </ion-content>
