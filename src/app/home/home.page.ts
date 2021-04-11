@@ -10,7 +10,6 @@ export class HomePage {
 
   constructor(private http: HttpClient) {}
 
-  canShow: boolean = false;
   lat: number;
   long: number;
   locations = {};
@@ -122,7 +121,7 @@ export class HomePage {
     if (this.counter != 19){
 
       this.counter++;
-      if (this.locations[this.keys[this.counter]][3][0] == 1){
+      if (this.locations[this.keys[this.counter]][3][0] == 1 || this.locations[this.keys[this.counter]][3][1] == false){
         this.counter++;
       }
       this.generateCards()
@@ -144,13 +143,11 @@ export class HomePage {
   nextPerson(){
     if (this.person < +this.participants) {
       this.counter = 0;
+      this.generateCards()
       this.person++;
       this.play = false;
     } else {
-      var shrek = this.getResults();
-      var name = this.locations[shrek][0];
-
-      console.log(name);
+      this.getResults();
     }
   }
 
@@ -181,6 +178,30 @@ export class HomePage {
     this.name = this.locations[maxPlaceId][0]
     this.address = this.locations[maxPlaceId][1]
     this.votes = max;
-    return maxPlaceId;
+  }
+
+  startOver(){
+    this.lat = 0;
+    this.long = 0;
+    this.locations = {};
+    this.selected = {};
+    this.submitted = false;
+    this.searched = "";
+    this.participants = "2";
+    this.matched = false;
+
+    //Card Values
+    this.name = "";
+    this.address = "";
+    this.linkToPhoto = "";
+    this.counter = 0;
+    this.keys = []
+
+    //Participant Stuff
+    this.play = false;
+    this.person = 1;
+
+    //Match
+    this.votes = 0;
   }
 }
