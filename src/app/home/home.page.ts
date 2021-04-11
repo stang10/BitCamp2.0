@@ -35,6 +35,7 @@ export class HomePage {
 
   //Match
   votes: number = 0;
+  displayString: String;
 
 
   setSearches(ev: any) {
@@ -246,6 +247,15 @@ export class HomePage {
     this.address = this.locations[maxPlaceId][1]
     this.rating = this.locations[maxPlaceId][4]
     this.votes = max;
+    if (this.votes == +this.participants){
+      this.displayString = "It's a match!"
+    } else if (this.votes == 0){
+      this.displayString = "Here's our recommendation!"
+    } else if (this.votes >= +this.participants/2){
+      this.displayString = "It's nearly a match!"
+    } else {
+      this.displayString = "Here's the most agreed upon place!"
+    }
   }
 
   startOver() {
@@ -272,6 +282,7 @@ export class HomePage {
 
     //Match
     this.votes = 0;
+    this.displayString = "";
   }
 
   async unrecognizedLocation() {

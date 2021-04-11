@@ -12,6 +12,9 @@
     <ion-label position="stacked">Search Location<ion-text color="danger">*</ion-text></ion-label>
     <ion-input required type="text" [(ngModel)]="searched"></ion-input>
   </ion-item>-->
+  <ion-text color="primary">
+    <center><h1>Fill out the following fields to choose a place to eat!</h1></center>
+  </ion-text>
   <ion-searchbar [(ngModel)]="searched" inputmode="search" autocorrect="on" placeholder="Enter as City Name, State"></ion-searchbar>
   <ion-list> 
     <ion-item>
@@ -105,8 +108,8 @@
   <ion-content *ngIf="matched === true" [fullscreen]="true">
     <ion-card color="success">
       <ion-card-header>
-        <ion-card-subtitle>With {{votes}} votes...</ion-card-subtitle>
-        <ion-card-title>It's a match!</ion-card-title>
+        <ion-card-subtitle>With {{votes}} vote(s)...</ion-card-subtitle>
+        <ion-card-title>{{displayString}}</ion-card-title>
       </ion-card-header>
       <ion-card-content>
 
