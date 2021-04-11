@@ -1,13 +1,10 @@
 <ion-header *ngIf="submitted === false" [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Blank
+      Bit of Hungr
     </ion-title>
   </ion-toolbar>
 </ion-header>
-
-
-
 
 <ion-content *ngIf="submitted === false" [fullscreen]="true">
   <!---<ion-searchbar (search)="setSearches($event)" inputmode="search" autocorrect="on" placeholder="Enter as CityName, State" ></ion-searchbar>--->
@@ -15,7 +12,7 @@
     <ion-label position="stacked">Search Location<ion-text color="danger">*</ion-text></ion-label>
     <ion-input required type="text" [(ngModel)]="searched"></ion-input>
   </ion-item>-->
-  <ion-searchbar [(ngModel)]="searched" inputmode="search" autocorrect="on" placeholder="Enter as CityName, State" ></ion-searchbar>
+  <ion-searchbar [(ngModel)]="searched" inputmode="search" autocorrect="on" placeholder="Enter as City Name, State"></ion-searchbar>
   <ion-list> 
     <ion-item>
       <ion-label>Number of Participants</ion-label>
@@ -40,7 +37,7 @@
 </ion-content>
 
 
-<ion-header *ngIf="submitted === true" [translucent]="true">
+<ion-header *ngIf="submitted === true && matched === false" [translucent]="true">
   <ion-toolbar>
     <ion-title>
       Person {{person}}
@@ -48,20 +45,29 @@
   </ion-toolbar>
 </ion-header>
 
+<ion-header *ngIf="matched === true" [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Match Results
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
 <ion-content *ngIf="submitted === true" [fullscreen]="true">
   <ion-content *ngIf="play === true && matched === false" [fullscreen]="true">
-    <ion-card>
-      <img src="{{linkToPhoto}}"/>
+    <ion-button color="primary" fill="clear" type="submit" (click)="startOver()">X</ion-button>
+    <ion-card class="locations">
+      <img *ngIf="photoExists === true" src="{{linkToPhoto}}"/>
       <ion-card-header>
         <ion-card-title>{{name}}</ion-card-title>
       </ion-card-header>
       
       <ion-card-content>
-        {{address}} 
+        {{address}} <p>Rating: {{rating}}</p>
       </ion-card-content>
     </ion-card>
 
-    <ion-grid>
+    <ion-grid class="bottom-fix">
       <ion-row>
         <ion-col>
            <div class="ion-padding">
@@ -80,6 +86,7 @@
   </ion-content>
 
   <ion-content *ngIf="play === false && matched === false" [fullscreen]="true">
+    <ion-button color="primary" fill="clear" type="submit" (click)="startOver()">X</ion-button>
     <ion-card>
       <ion-card-header>
         <ion-card-title>Person {{person}}</ion-card-title>
@@ -106,13 +113,13 @@
       </ion-card-content>
     </ion-card>
     <ion-card>
-      <img src="{{linkToPhoto}}"/>
+      <img *ngIf="photoExists === true" src="{{linkToPhoto}}"/>
       <ion-card-header>
         <ion-card-title>{{name}}</ion-card-title>
       </ion-card-header>
       
       <ion-card-content>
-        {{address}} 
+        {{address}} <p>Rating: {{rating}}</p>
       </ion-card-content>
     </ion-card>
     <div class="ion-padding">

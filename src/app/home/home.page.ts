@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
+import { AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-home',
@@ -8,7 +9,7 @@ import { HttpClient } from '@angular/common/http'
 })
 export class HomePage {
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private alertController: AlertController) { }
 
   lat: number;
   long: number;
@@ -23,7 +24,9 @@ export class HomePage {
   name: String;
   address: String;
   linkToPhoto: String;
+  photoExists = true;
   counter = 0;
+  rating: any;
   keys = []
 
   //Participant Stuff
@@ -34,7 +37,7 @@ export class HomePage {
   votes: number = 0;
 
 
-  setSearches(ev: any){
+  setSearches(ev: any) {
     let val: String = ev.target.value;
 
     val = val.trim();
@@ -45,87 +48,151 @@ export class HomePage {
 
   async getLocation() {
 
-    var latLng;
+    if (!this.searched || !this.participants) {
+      this.missingFields()
+    }
+    else {
 
-    const response = await this.getLatLng(this.searched);
+      var latLng;
 
-    latLng = response;
+      const response = await this.getLatLng(this.searched);
 
-    //console.log("ltlng: " + latLng);
+      if (response) {
+        latLng = response;
 
-    var lt = latLng[0];
-    var lng = latLng[1];
+        //console.log("ltlng: " + latLng);
 
-    console.log("lt: " + lt + " lng: " + lng);
+        var lt = latLng[0];
+        var lng = latLng[1];
 
-    const proxyURL = "https://cors-anywhere.herokuapp.com/";
+        console.log("lt: " + lt + " lng: " + lng);
 
-    var rests = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?query=restaurant&location=" + lt + "," + lng + "&radius=15000&&type=restaurant&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8";
+        const proxyURL = "https://cors-anywhere.herokuapp.com/";
 
-    let httpString = proxyURL.concat(rests);
+        var rests = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?query=restaurant&location=" + lt + "," + lng + "&radius=15000&&type=restaurant&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8";
+
+        let httpString = proxyURL.concat(rests);
 
 
-    this.http.get(httpString).subscribe((response) => {
-      console.log(response);
-      
-      for (let i = 0; i < 20; i++) {
-        if (response['results'][i].hasOwnProperty("opening_hours")){
-          this.locations[response['results'][i]['place_id']] = [response['results'][i]['name'], response['results'][i]['vicinity'], response['results'][i]['photos'][0]['photo_reference'], [0,response['results'][i]['opening_hours']['open_now']], response['results'][i]['rating']]
-        }
-        else{
-          this.locations[response['results'][i]['place_id']] = [response['results'][i]['name'], response['results'][i]['vicinity'], response['results'][i]['photos'][0]['photo_reference'], [1], response['results'][i]['rating']]
-        }
-        this.selected[response['results'][i]['place_id']] = 0
+        this.http.get(httpString).subscribe((response) => {
+          console.log(response);
+
+          for (let i = 0; i < 20; i++) {
+            // if (response['results'][i].hasOwnProperty("opening_hours")){
+            //   this.locations[response['results'][i]['place_id']] = [response['results'][i]['name'], response['results'][i]['vicinity'], response['results'][i]['photos'][0]['photo_reference'], [0,response['results'][i]['opening_hours']['open_now']], response['results'][i]['rating']]
+            // }
+            // else{
+            //   this.locations[response['results'][i]['place_id']] = [response['results'][i]['name'], response['results'][i]['vicinity'], response['results'][i]['photos'][0]['photo_reference'], [1], response['results'][i]['rating']]
+            // }
+
+            if (response['results'][i].hasOwnProperty("name")) {
+              this.locations[response['results'][i]['place_id']] = [response['results'][i]['name']]
+            }
+            else {
+              this.locations[response['results'][i]['place_id']] = ["No Name Registered"]
+            }
+
+            if (response['results'][i].hasOwnProperty("vicinity")) {
+              this.locations[response['results'][i]['place_id']].push(response['results'][i]['vicinity'])
+            }
+            else {
+              this.locations[response['results'][i]['place_id']].push("No Official Address Registered")
+            }
+
+            if (response['results'][i].hasOwnProperty("photos")) {
+              this.locations[response['results'][i]['place_id']].push(response['results'][i]['photos'][0]['photo_reference'])
+            }
+            else {
+              this.locations[response['results'][i]['place_id']].push("None")
+            }
+
+            if (response['results'][i].hasOwnProperty("opening_hours")) {
+              this.locations[response['results'][i]['place_id']].push([0, response['results'][i]['opening_hours']['open_now']])
+            }
+            else {
+              if (response['results'][i].hasOwnProperty("permanently_closed:")) {
+                this.locations[response['results'][i]['place_id']].push([1])
+              }
+              else {
+                this.locations[response['results'][i]['place_id']].push([2])
+              }
+            }
+
+            if (response['results'][i].hasOwnProperty("rating")) {
+              this.locations[response['results'][i]['place_id']].push(response['results'][i]['rating'])
+            }
+            else {
+              this.locations[response['results'][i]['place_id']].push(-1)
+            }
+
+            this.selected[response['results'][i]['place_id']] = 0
+          }
+
+          console.log(this.locations[response['results'][2]['place_id']])
+          console.log(this.selected[response['results'][2]['place_id']])
+
+          console.log(Object.keys(this.locations));
+
+          this.submitted = true;
+          this.keys = Object.keys(this.locations)
+          this.generateCards();
+        });
+
+        console.log(this.participants);
       }
-      
-      console.log(this.locations[response['results'][2]['place_id']])
-      console.log(this.selected[response['results'][2]['place_id']])
-
-      console.log(Object.keys(this.locations));
-
-      this.submitted = true;
-      this.keys = Object.keys(this.locations)
-      this.generateCards();
-    });
-
-    console.log(this.participants);
+    }
 
   }
 
   async getLatLng(city: String) {
 
-    var placesString =  'https://maps.googleapis.com/maps/api/geocode/json?address=' + city + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8';
-    var ltLng:any;
+    var placesString = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + city + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8';
+    var ltLng: any;
 
-    const response = await this.http.get(placesString, {responseType: 'json'}).toPromise();
+    const response = await this.http.get(placesString, { responseType: 'json' }).toPromise();
+    console.log(response)
 
-    ltLng = [2];
-    ltLng[0] = response['results'][0]['geometry']['location']["lat"];
-    ltLng[1] = response['results'][0]['geometry']['location']["lng"];
+    if (response['status'] == "ZERO_RESULTS") {
+      this.unrecognizedLocation()
+      return null
+    } else {
+      ltLng = [2];
+      ltLng[0] = response['results'][0]['geometry']['location']["lat"];
+      ltLng[1] = response['results'][0]['geometry']['location']["lng"];
 
-    console.log("out of scope " + ltLng);
-    
-    return ltLng; 
+      console.log("out of scope " + ltLng);
+
+      return ltLng;
+    }
   }
 
   generateCards() {
     var card = this.keys[this.counter]
-
-    this.linkToPhoto = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' + this.locations[card][2] + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8'
+    if (this.locations[card][2] == "None") {
+      this.photoExists = false
+    }
+    else {
+      this.photoExists = true
+      this.linkToPhoto = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' + this.locations[card][2] + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8'
+    }
     this.name = this.locations[card][0]
     this.address = this.locations[card][1]
+    if (this.locations[card][4] == -1){
+      this.rating = "Unrated"
+    } else {
+      this.rating = this.locations[card][4]
+    }
 
   }
 
   moveToNext() {
-    if (this.counter != 19){
-
+    if (this.counter != 19) {
       this.counter++;
-      if (this.locations[this.keys[this.counter]][3][0] == 1 || this.locations[this.keys[this.counter]][3][1] == false){
+      if (this.locations[this.counter + 1] && (this.locations[this.keys[this.counter]][3][0] == 1 || (this.locations[this.keys[this.counter]][3][0] == 0 && this.locations[this.keys[this.counter]][3][1] == false))) {
         this.counter++;
       }
       this.generateCards()
-    } 
+    }
     else {
       this.nextPerson()
     }
@@ -136,11 +203,11 @@ export class HomePage {
     this.moveToNext();
   }
 
-  startPerson(){
+  startPerson() {
     this.play = true;
   }
 
-  nextPerson(){
+  nextPerson() {
     if (this.person < +this.participants) {
       this.counter = 0;
       this.generateCards()
@@ -156,17 +223,17 @@ export class HomePage {
     var maxPlaceId;
     var maxRating;
 
-    for(let key in this.selected) {
+    for (let key in this.selected) {
       let value = this.selected[key];
 
-      if(value > max) {
+      if (value > max) {
         max = value;
         maxPlaceId = key;
         maxRating = this.locations[key][4];
       }
-      
-      if(value == max) {
-        if(this.locations[key][4] > maxRating) {
+
+      if (value == max) {
+        if (this.locations[key][4] > maxRating) {
           max = value;
           maxPlaceId = key;
           maxRating = this.locations[key][4];
@@ -177,10 +244,11 @@ export class HomePage {
     this.linkToPhoto = 'https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=' + this.locations[maxPlaceId][2] + '&key=AIzaSyDN6CczC9Jy5lKDlw8ET2Z_cpjbLjTf5k8'
     this.name = this.locations[maxPlaceId][0]
     this.address = this.locations[maxPlaceId][1]
+    this.rating = this.locations[maxPlaceId][4]
     this.votes = max;
   }
 
-  startOver(){
+  startOver() {
     this.lat = 0;
     this.long = 0;
     this.locations = {};
@@ -195,6 +263,7 @@ export class HomePage {
     this.address = "";
     this.linkToPhoto = "";
     this.counter = 0;
+    this.rating = 0.0;
     this.keys = []
 
     //Participant Stuff
@@ -203,5 +272,41 @@ export class HomePage {
 
     //Match
     this.votes = 0;
+  }
+
+  async unrecognizedLocation() {
+    const alert = await this.alertController.create({
+      header: 'Alert',
+      subHeader: 'Unrecognized Location',
+      message: 'Google was unable to generate suggestions based on the entered location.',
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.startOver();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async missingFields() {
+    const alert = await this.alertController.create({
+      header: 'Alert',
+      subHeader: 'Missing Fields',
+      message: 'You must enter both a Location and Number of Participants to Proceed.',
+      buttons: [
+        {
+          text: 'Ok',
+          handler: () => {
+            this.startOver();
+          }
+        }
+      ]
+    });
+
+    await alert.present();
   }
 }
