@@ -1,4 +1,7 @@
-# BitCamp2.0
+# Bit of Hungr
+
+Winner: Best use of Google Cloud - MLH
+Bit Camp Link: https://devpost.com/software/bit-of-hungr
 
 Inspiration
 
